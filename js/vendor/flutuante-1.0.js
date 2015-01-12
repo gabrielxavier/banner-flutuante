@@ -12,6 +12,7 @@ $.flutuante = function( selector, settings ){
 		closeTimer: 0, //Em segundos
 		displayAuto: true, //Indica se ele deve ser exibido automaticamente quando o plugin for instanciado.
 		hideWhenView: false, //Se for passado uma hash/id o float será exibido somente se o usuário não clicou no link ainda.
+		hidenOnEsc : true,
 		messages : {
 			elementNotFound : 'Não foi encontrado o elemento do float na página.',
 			floatNotInitialized : 'Não foi possível abrir o float pois ele não foi inicializado ou já foi visualizado.',
@@ -49,6 +50,14 @@ $.flutuante = function( selector, settings ){
 				//Chama a função para mostrar o float de estiver setado para abrir automaticamente.
 				if( flutuante.defaults.displayAuto && flutuante.vars.viewed == false ){
 					flutuante.functions.open();
+				}
+				//Chama a função de fechar o float caso a tecla ESC for precisionada.
+				if( flutuante.defaults.hidenOnEsc == true ) {
+					$(document).on('keyup', function(e){
+						e.preventDefault();
+					    if(e.keyCode==27)
+					        flutuante.functions.close();
+					});
 				}
 				//Retorna o objeto do plugin.
 				return flutuante;
