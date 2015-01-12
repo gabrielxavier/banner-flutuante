@@ -11,7 +11,12 @@ $.flutuante = function( selector, settings ){
 		closeText : 'X', //Texto do botão fechar.
 		closeTimer: 0, //Em segundos
 		displayAuto: true, //Indica se ele deve ser exibido automaticamente quando o plugin for instanciado.
-		hideWhenView: false //Se for passado uma hash/id o float será exibido somente se o usuário não clicou no link ainda.
+		hideWhenView: false, //Se for passado uma hash/id o float será exibido somente se o usuário não clicou no link ainda.
+		messages : {
+			elementNotFound : 'Não foi encontrado o elemento do float na página.',
+			floatNotInitialized : 'Não foi possível abrir o float pois ele não foi inicializado ou já foi visualizado.',
+			floatIsClosed: 'O float já está fechado.'
+		}
 	}
 
 	$.extend( flutuante.defaults, settings );
@@ -20,7 +25,7 @@ $.flutuante = function( selector, settings ){
 		init : function(){
 			if(  !$(flutuante.selector).length ){
 				//Atribui a exceção caso o elemento do float não for encontrado.
-				flutuante.vars.exception = "Não foi encontrado o elemento do float na página.";
+				flutuante.vars.exception = flutuante.defaults.messages.elementNotFound;
 				//Retorna indicando que o plugin não foi inicializado.
 				return flutuante;
 			}else{
@@ -56,7 +61,9 @@ $.flutuante = function( selector, settings ){
 				//Cria overlay.
 				$('body').append('<div class="'+flutuante.defaults.overlaySelector+'"></div>').find('.'+flutuante.defaults.overlaySelector).fadeIn(1000*flutuante.defaults.animationSpeed).on('click', flutuante.functions.close );
 				//Exibe modal.
-				$(flutuante.selector).animate({ top: flutuante.defaults.topDistance }, 1000*flutuante.defaults.animationSpeed).find('.'+flutuante.defaults.closeSelector).on('click', flutuante.functions.close );
+				$(flutuante.selector).animate({ top: parseInt(flutuante.defaults.topDistance) }, 1000*flutuante.defaults.animationSpeed).find('.'+flutuante.defaults.closeSelector).on('click', flutuante.functions.close );
+				//Move o documento para o topo
+				$("html, body").animate({ scrollTop: "0px" });
 				//Seta timer.
 				if( flutuante.defaults.closeTimer > 0 ){
 					flutuante.defaults.timer = setTimeout( flutuante.functions.close, flutuante.defaults.closeTimer * 1000 );
@@ -65,7 +72,7 @@ $.flutuante = function( selector, settings ){
 				flutuante.vars.visible = true;
 				return true;
 			}else{
-				flutuante.vars.exception = "Não foi possível abrir o float pois ele não foi inicializado ou já foi visualizado.";
+				flutuante.vars.exception = flutuante.defaults.messages.floatNotInitialized;
 				return false;
 			}
 		},
@@ -79,7 +86,7 @@ $.flutuante = function( selector, settings ){
 				flutuante.vars.visible = false;
 				return true;
 			}else{
-				flutuante.vars.exception = "O float já está fechado.";
+				flutuante.vars.exception = flutuante.defaults.messages.floatIsClosed;
 				return false;
 			}
 		},
